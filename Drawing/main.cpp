@@ -1,15 +1,16 @@
 //================================================
-// YOUR NAME GOES HERE <-----------------  
+// David Logan Drawing Program
 //================================================
 #include <iostream>
+#include <iomanip>
 #include <fstream>
-using namespace std;
 #include <SFML\Graphics.hpp>
-#include "SettingsMgr.h"
-#include "ShapeMgr.h"
 #include "SettingsUI.h"
+#include "SettingsMgr.h"
 #include "DrawingUI.h"
-using namespace sf;
+#include "ShapeMgr.h"
+
+using namespace std;
 
 // Finish this code. Other than where it has comments telling you to 
 // add code, you shouldn't need to add any logic to main to satisfy
@@ -20,40 +21,45 @@ int main()
 	const int WINDOW_WIDTH = 800;
 	const int WINDOW_HEIGHT = 600;
 
-	RenderWindow window(VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Drawing");
+	RenderWindow window(VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Drawing Simulator");
 	window.setFramerateLimit(60);
 
 	SettingsMgr settingsMgr(Color::Blue, ShapeEnum::CIRCLE);
-	SettingsUI  settingsUI(&settingsMgr); 
+	SettingsUI  settingsUI(&settingsMgr);
 	ShapeMgr    shapeMgr;
 	DrawingUI   drawingUI(Vector2f(200, 50));
-	
-	// ********* Add code here to make the managers read from shapes file (if the file exists)
 
-	while (window.isOpen()) 
+	// Opens the shape file
+	fstream inFile;
+	inFile.open("shapes2.bin", ios::in | ios::binary);
+	if (inFile) {
+		settingsMgr.readFile(inFile);
+		shapeMgr.readFile(inFile);
+	}
+	inFile.close();
+
+	while (window.isOpen())
 	{
 		Event event;
-		while (window.pollEvent(event))
-		{
-			if (event.type == Event::Closed)
-			{
+		while (window.pollEvent(event)){
+			if (event.type == Event::Closed){
 				window.close();
-				// ****** Add code here to write all data to shapes file
+				// Writes data to the file
+				fstream outFile;
+				outFile.open("shapes.bin", ios::out | ios::binary);
+				settingsMgr.writeFile(outFile);
+				shapeMgr.writeFile(outFile);
+				outFile.close();
 			}
-			else if (event.type == Event::MouseButtonReleased)
-			{
-				// maybe they just clicked on one of the settings "buttons"
-				// check for this and handle it.
+			else if (event.type == Event::MouseButtonReleased){
 				Vector2f mousePos = window.mapPixelToCoords(Mouse::getPosition(window));
 				settingsUI.handleMouseUp(mousePos);
 			}
-			else if (event.type == Event::MouseMoved && Mouse::isButtonPressed(Mouse::Button::Left))
-			{
-				
+			else if (event.type == Event::MouseMoved && Mouse::isButtonPressed(Mouse::Button::Left)){
+
 				Vector2f mousePos = window.mapPixelToCoords(Mouse::getPosition(window));
-				// check to see if mouse is in the drawing area
-				if (drawingUI.isMouseInCanvas(mousePos))
-				{
+				// Checks if the mouse is in the drawing area
+				if (drawingUI.isMouseInCanvas(mousePos)){
 					// add a shape to the list based on current settings
 					shapeMgr.addShape(mousePos, settingsMgr.getCurShape(), settingsMgr.getCurColor());
 				}

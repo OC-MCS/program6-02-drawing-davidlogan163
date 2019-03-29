@@ -37,7 +37,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="shapes.bin">
+    <None Include="..\..\..\..\..\Downloads\shapes2.bin">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
