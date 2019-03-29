@@ -31,7 +31,7 @@ int main()
 
 	// Opens the shape file
 	fstream inFile;
-	inFile.open("shapes2.bin", ios::in | ios::binary);
+	inFile.open("shapes.bin", ios::in | ios::binary);
 	if (inFile) {
 		settingsMgr.readFile(inFile);
 		shapeMgr.readFile(inFile);
